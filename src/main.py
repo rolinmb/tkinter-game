@@ -1,23 +1,10 @@
+from consts import BOARD_HEIGHT, BOARD_WIDTH, CELL_SIZE, KEY_MAP, N_ROOMS
+from gen import generate_board, find_random_start
 import tkinter as tk
-import random
 
-GRID_SIZE = 10
-CELL_SIZE = 40
-BOARD_WIDTH, BOARD_HEIGHT = 15, 10
-KEY_MAP = {
-    "w": (0, -1), "Up": (0, -1),
-    "s": (0, 1), "Down": (0, 1),
-    "a": (-1, 0), "Left": (-1, 0),
-    "d": (1, 0), "Right": (1, 0)
-}
+GAME_BOARD = generate_board(N_ROOMS)
 
-# Generate a random BOARD (1 = wall, 0 = empty space)
-GAME_BOARD = [[random.choice([0, 1]) if (x > 0 and y > 0 and x < BOARD_WIDTH-1 and y < BOARD_HEIGHT-1) else 1 
-             for x in range(BOARD_WIDTH)] for y in range(BOARD_HEIGHT)]
-
-GAME_BOARD[1][1] = 0 # ensure start position is walkable
-
-player_x, player_y = 1, 1 # player state
+player_x, player_y = find_random_start(GAME_BOARD)
 
 root = tk.Tk()
 root.title("tkinter-game")
@@ -29,10 +16,10 @@ def draw_board():
     canvas.delete("all")
     for y in range(BOARD_HEIGHT):
         for x in range(BOARD_WIDTH):
-            color = "gray" if GAME_BOARD[y][x] == 1 else "white"
+            cell_color = "gray" if GAME_BOARD[y][x] == 1 else "white"
             canvas.create_rectangle(x * CELL_SIZE, y * CELL_SIZE, 
                                     (x + 1) * CELL_SIZE, (y + 1) * CELL_SIZE, 
-                                    fill=color, outline="black")
+                                    fill=cell_color, outline="black")
     # Draw player
     canvas.create_oval(player_x * CELL_SIZE + 10, player_y * CELL_SIZE + 10,
                         player_x * CELL_SIZE + 30, player_y * CELL_SIZE + 30,
